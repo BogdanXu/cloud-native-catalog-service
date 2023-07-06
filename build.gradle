@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.0'
+	id 'org.springframework.boot' version '3.0.0'
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
@@ -11,15 +11,39 @@ java {
 	sourceCompatibility = '17'
 }
 
+ext {
+	set('springCloudVersion', "2022.0.0")
+}
+
 repositories {
 	mavenCentral()
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+bootRun {
+	systemProperty 'spring.profiles.active', 'testdata'
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.retry:spring-retry'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 tasks.named('test') {
